@@ -1,0 +1,12 @@
+[submodule "Frontend"]
+	path = Frontend
+	url = https://github.com/Doctor-Appointment-SA/Doctor-Appointment-Frontend.git
+	branch = main
+[submodule "Authentication-Service"]
+	path = Authentication-Service
+	url = https://github.com/Doctor-Appointment-SA/Authentication-Service.git
+	branch = main
+[submodule "Appointment-service"]
+	path = Appointment-service
+	url = https://github.com/Doctor-Appointment-SA/Scheduling-Service.git
+	branch = main
