@@ -1,0 +1,36 @@
+name: Bump submodules
+
+on:
+  workflow_dispatch:        # กดรันเองได้
+  schedule:
+    - cron: "*/30 * * * *"  # ทุก 30 นาที (ปรับได้)
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Update submodules to latest tracked branches
+        run: |
+          git config user.name  "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+          # ดึง commit ล่าสุดตาม branch ที่ตั้งไว้ใน .gitmodules
+          git submodule update --remote --recursive
+
+          git add Frontend Authentication-Service Appointment-service
+
+          # ถ้าไม่มีการเปลี่ยน pointer จะไม่ commit/push
+          if git diff --cached --quiet; then
+            echo "No submodule changes."
+            exit 0
+          fi
+
+          git commit -m "chore: bump submodules"
+          git push
