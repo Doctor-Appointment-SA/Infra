@@ -3,13 +3,13 @@ name: Bump submodules
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "*/30 * * * *"   # ทุก 30 นาที (ปรับได้)
+    - cron: "*/30 * * * *"
   repository_dispatch:
-    types: [bump-submodules]  # ถ้าอยากให้ repo อื่นยิงสัญญาณมา
+    types: [bump-submodules]
 
 permissions:
-  contents: write        # push branch/commit ได้
-  pull-requests: write   # สร้าง PR + เปิด auto-merge ได้
+  contents: write
+  pull-requests: write
 
 jobs:
   bump:
@@ -20,33 +20,20 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-          # ถ้า submodule เป็น private ให้เปิดคอมเมนต์บรรทัดล่าง และใส่ DEPLOY_KEY ใน Secrets
-          # ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Update submodules to latest tracked branches
         run: |
           set -euo pipefail
           git config user.name  "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
-
-          # เผื่อ .gitmodules เปลี่ยน remote/branch
           git submodule sync --recursive
-
-          # ดึง commit ล่าสุด ตาม branch ใน .gitmodules (เช่น branch=main)
           git submodule update --init --remote --recursive
-
-          # stage การเปลี่ยน pointer ทั้งหมด
           git add .
-
-          # ถ้าไม่มี diff ก็จบ
           if git diff --cached --quiet; then
             echo "No submodule changes."
             exit 0
           fi
-
-          # เตรียมสาขาที่ใช้ทำ PR
           git checkout -B chore/bump-submodules
-
           git commit -m "chore(submodules): bump to latest tracked commits"
 
       - name: Create PR
@@ -58,8 +45,10 @@ jobs:
           branch: "chore/bump-submodules"
           commit-message: "chore(submodules): bump to latest tracked commits"
           labels: "automation,submodules"
-          # 2 ตัวเลือกสำหรับ auto-merge (เลือกอย่างใดอย่างหนึ่งด้านล่าง)
 
-          # วิธีที่ 1: ให้ action จัดการ auto-merge เอง (ง่ายสุด)
-          auto-merge: true
-          merge-method: squash
+      - name: Enable auto-merge (squash) for the PR
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --squash --auto
