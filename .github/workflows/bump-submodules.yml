@@ -3,7 +3,7 @@ name: Bump submodules
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0 */2 * * *"     # รันทุก 2 ชั่วโมง
   repository_dispatch:
     types: [bump-submodules]
 
