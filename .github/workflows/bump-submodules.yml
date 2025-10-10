@@ -33,7 +33,6 @@ jobs:
             echo "No submodule changes."
             exit 0
           fi
-          git checkout -B chore/bump-submodules
           git commit -m "chore(submodules): bump to latest tracked commits"
 
       - name: Create PR
@@ -42,6 +41,8 @@ jobs:
         with:
           title: "chore: bump submodules"
           body: "Automated update of submodule pointers via workflow."
+          # base กำหนดเป็น default branch ชัวร์ ๆ
+          base: ${{ github.event.repository.default_branch }}
           branch: "chore/bump-submodules"
           commit-message: "chore(submodules): bump to latest tracked commits"
           labels: "automation,submodules"
