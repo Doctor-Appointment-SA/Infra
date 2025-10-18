@@ -5,7 +5,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:8080"
+      NEXT_PUBLIC_API_URL: "http://localhost:9000"
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
     command: npm run dev
@@ -50,7 +50,7 @@ services:
   gateway:
     image: nginx:1.27
     ports:
-      - "8080:8080"  
+      - "9000:8080"  
     volumes:
       - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on: [auth-service, appointment-service]
