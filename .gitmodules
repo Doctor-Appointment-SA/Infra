@@ -10,3 +10,11 @@
 	path = Appointment-service
 	url = https://github.com/Doctor-Appointment-SA/Scheduling-Service.git
 	branch = main
+[submodule "Payment-Service"]
+	path = Payment-Service
+	url = https://github.com/Doctor-Appointment-SA/Payment-Service.git
+	branch = main
+[submodule "svc-pharmacy"]
+	path = svc-pharmacy
+	url = https://github.com/Doctor-Appointment-SA/svc-pharmacy.git
+	branch = main
