@@ -18,3 +18,7 @@
 	path = svc-pharmacy
 	url = https://github.com/Doctor-Appointment-SA/svc-pharmacy.git
 	branch = main
+[submodule "svc-doctor-profile"]
+	path = svc-doctor-profile
+	url = https://github.com/Doctor-Appointment-SA/svc-doctor-profile.git
+	branch = main
