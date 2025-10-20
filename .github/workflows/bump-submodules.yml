@@ -3,7 +3,7 @@ name: Bump submodules
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "0 */2 * * *"     # รันทุก 2 ชั่วโมง
+    - cron: "0 */2 * * *"
   repository_dispatch:
     types: [bump-submodules]
 
@@ -15,17 +15,22 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (with submodules)
+      - name: Checkout (with submodules, using PAT)
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.ORG_READ_TOKEN }}   # <<< สำคัญ
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
+
+      - name: Configure git author
+        run: |
+          git config user.name  "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Update submodules to latest tracked branches
         run: |
           set -euo pipefail
-          git config user.name  "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
           git submodule sync --recursive
           git submodule update --init --remote --recursive
           git add .
@@ -41,7 +46,6 @@ jobs:
         with:
           title: "chore: bump submodules"
           body: "Automated update of submodule pointers via workflow."
-          # base กำหนดเป็น default branch ชัวร์ ๆ
           base: ${{ github.event.repository.default_branch }}
           branch: "chore/bump-submodules"
           commit-message: "chore(submodules): bump to latest tracked commits"
@@ -51,5 +55,4 @@ jobs:
         if: steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --squash --auto
+        run: gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --squash --auto
