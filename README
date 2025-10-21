@@ -1,0 +1,11 @@
+# 1) โคลน infra
+-รัน git clone https://github.com/Doctor-Appointment-SA/Infra.git .
+
+# 2) เพิ่ม submodules 
+-รัน git submodule update --init --recursive
+
+# 3) ใส่ .env ใน folder infra
+
+# 4) build image
+-เปิด docker desktop
+-รัน docker compose up --build
